@@ -1,8 +1,8 @@
 # GoreeCloud YouTube Player — Features
 
-This file separates **integrated capability**, **current Development candidate behavior**, and **planned product scope**.
+This file separates **integrated capability**, **current Development validation work**, and **planned product scope**.
 
-## Integrated Android foundation
+## Integrated Android source
 
 - Native Android application shell using Kotlin and Jetpack Compose.
 - Development package identity using `com.goreecloud.youtubeplayer.dev`.
@@ -11,23 +11,27 @@ This file separates **integrated capability**, **current Development candidate b
 - `ContentProvider` abstraction.
 - Deterministic, network-free `LocalDemoProvider`.
 - Versioned schema-v1 contract for local library-oriented state.
-- Machine-readable provider and Platform-System contracts.
-- Development UI for capability decisions.
-- Exact-source Android validation workflow.
-- Android automatic backup disabled pending accepted recovery authority.
-
-## Current Development candidate — PR #2
-
-- Runtime SQLite schema-v1 initialization.
-- Durable watch-history persistence.
-- Durable resume-position persistence.
+- Runtime SQLite binding through `SQLiteLocalLibraryStore`.
+- Durable watch-history persistence operations.
+- Durable resume-position persistence operations.
 - Atomic replacement of validated imported progress state.
 - Deterministic `GCYTP-LIBRARY` v1 UTF-8 export/import.
 - SHA-256 integrity verification plus count, range, identity, and duplicate validation.
 - Development UI visibility of schema version and local progress counts.
-- Unit coverage for interchange and portability-service behavior.
+- Machine-readable provider and Platform-System contracts.
+- Exact-source Android validation workflow with unit tests, lint, APK identity checks, and a no-`INTERNET` guard.
+- Android automatic backup disabled pending accepted recovery authority.
 
-These items are not integrated until the exact PR #2 candidate passes review and exact-head validation and is intentionally merged.
+## Current Development validation candidate
+
+The current runtime-acceptance branch adds Android instrumentation and CI coverage for the integrated local-data boundary:
+
+- schema-v1 initialization on an Android 16 emulator;
+- persisted watch-history and resume-position state surviving database close/reopen;
+- replacement state surviving reopen while displaced state is removed;
+- tampered/rejected imports leaving existing persisted progress unchanged.
+
+These checks are Development validation evidence only until their exact pull-request head passes and the validated source is intentionally integrated and post-merge verified.
 
 ## Planned product features
 

@@ -94,3 +94,161 @@ jobs:
             build-evidence/app-debug.badging.txt
           if-no-files-found: error
           retention-days: 14
+
+  runtime-local-data:
+    name: Android runtime local-data acceptance
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Record exact runtime source revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+          ACTUAL_SHA="$(git rev-parse HEAD)"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+          mkdir -p build-evidence
+          printf '%s\n' "$ACTUAL_SHA" | tee build-evidence/runtime-source-commit.txt
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+
+      - name: Configure Android AVD home
+        shell: bash
+        run: |
+          set -euo pipefail
+          AVD_HOME="$RUNNER_TEMP/goreecloud-avd"
+          mkdir -p "$AVD_HOME"
+          printf 'ANDROID_AVD_HOME=%s\n' "$AVD_HOME" >> "$GITHUB_ENV"
+          printf '%s\n' "$AVD_HOME" | tee build-evidence/android-avd-home.txt
+
+      - name: Install Android emulator image
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
+          test -x "$SDKMANAGER"
+          test -x "$AVDMANAGER"
+
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --install \
+            "platform-tools" \
+            "emulator" \
+            "system-images;android-36;google_apis;x86_64"
+          test -x "$EMULATOR"
+
+          echo "no" | "$AVDMANAGER" create avd \
+            --force \
+            --name goreecloud-api36 \
+            --package "system-images;android-36;google_apis;x86_64" \
+            --path "$ANDROID_AVD_HOME/goreecloud-api36.avd"
+
+          "$AVDMANAGER" list avd | tee build-evidence/avdmanager-list.txt
+          "$EMULATOR" -list-avds | tee build-evidence/emulator-avds.txt
+          grep -Fxq "goreecloud-api36" build-evidence/emulator-avds.txt
+
+      - name: Start Android 16 emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          ADB="$ANDROID_HOME/platform-tools/adb"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
+          test -x "$ADB"
+          test -x "$EMULATOR"
+          test -d "$ANDROID_AVD_HOME/goreecloud-api36.avd"
+          "$EMULATOR" -list-avds | tee -a build-evidence/emulator-avds.txt
+          grep -Fxq "goreecloud-api36" build-evidence/emulator-avds.txt
+
+          if [[ ! -e /dev/kvm ]]; then
+            echo "GitHub runner does not expose /dev/kvm; refusing to claim accelerated emulator acceptance." >&2
+            exit 1
+          fi
+          sudo chmod 666 /dev/kvm
+
+          nohup "$EMULATOR" \
+            -avd goreecloud-api36 \
+            -no-window \
+            -noaudio \
+            -no-boot-anim \
+            -no-snapshot \
+            -accel on \
+            -gpu swiftshader_indirect \
+            > build-evidence/emulator.log 2>&1 &
+          EMULATOR_PID="$!"
+          echo "$EMULATOR_PID" > build-evidence/emulator.pid
+
+          sleep 5
+          if ! kill -0 "$EMULATOR_PID" 2>/dev/null; then
+            echo "Android emulator exited before adb became available." >&2
+            cat build-evidence/emulator.log >&2 || true
+            exit 1
+          fi
+
+          if ! timeout 180 "$ADB" wait-for-device; then
+            echo "Timed out waiting for adb to discover the Android emulator." >&2
+            cat build-evidence/emulator.log >&2 || true
+            exit 1
+          fi
+
+          BOOTED=""
+          for _ in $(seq 1 180); do
+            if ! kill -0 "$EMULATOR_PID" 2>/dev/null; then
+              echo "Android emulator exited before boot completed." >&2
+              cat build-evidence/emulator.log >&2 || true
+              exit 1
+            fi
+            BOOTED="$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+            if [[ "$BOOTED" == "1" ]]; then
+              break
+            fi
+            sleep 2
+          done
+          if [[ "$BOOTED" != "1" ]]; then
+            echo "Timed out waiting for Android boot completion." >&2
+            "$ADB" devices -l >&2 || true
+            cat build-evidence/emulator.log >&2 || true
+            exit 1
+          fi
+
+          "$ADB" shell settings put global window_animation_scale 0
+          "$ADB" shell settings put global transition_animation_scale 0
+          "$ADB" shell settings put global animator_duration_scale 0
+          "$ADB" shell input keyevent 82 || true
+
+      - name: Run SQLite runtime acceptance tests
+        run: gradle :app:connectedDebugAndroidTest --stacktrace
+
+      - name: Upload runtime acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-youtube-player-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            build-evidence/runtime-source-commit.txt
+            build-evidence/android-avd-home.txt
+            build-evidence/avdmanager-list.txt
+            build-evidence/emulator-avds.txt
+            build-evidence/emulator.log
+            app/build/reports/androidTests/connected/
+            app/build/outputs/androidTest-results/connected/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Stop emulator
+        if: always()
+        shell: bash
+        run: |
+          "$ANDROID_HOME/platform-tools/adb" emu kill || true

@@ -2,7 +2,7 @@
 
 ## Current implementation state
 
-The Milestone 2 development branch binds the existing schema-v1 contract to a runtime SQLite adapter for the first user-owned progress state:
+The integrated Android source binds the existing schema-v1 contract to a runtime SQLite adapter for the first user-owned progress state:
 
 - watch history;
 - resume positions.
@@ -59,12 +59,25 @@ Integrity verification detects accidental or unreviewed modification. It is not 
 
 Merge/append import modes are not implemented in this slice. User-facing import conflict controls, Everkeep recovery integration, Privacy Shield policy integration, and import previews remain future work.
 
+## Android runtime acceptance candidate
+
+The current Development validation branch adds instrumentation tests that exercise the real SQLite adapter on an Android 16 emulator. The tests verify:
+
+- first-open schema-v1 initialization and empty summary state;
+- watch-history and resume-position persistence across database close/reopen;
+- replacement progress state surviving reopen while prior state is removed;
+- a tampered interchange payload being rejected before replacement and existing persisted progress remaining unchanged.
+
+The associated CI job records and verifies the exact source revision before starting the emulator, runs `:app:connectedDebugAndroidTest`, and preserves emulator/test evidence as a workflow artifact.
+
+This is not accepted runtime evidence until the exact candidate passes and the validated source is intentionally integrated and post-merge verified.
+
 ## Privacy and network posture
 
-This local-data slice adds no network permission, remote account dependency, telemetry, cloud synchronization, remote backup, provider authentication, or external data transmission.
+This local-data slice adds no application network permission, remote account dependency, telemetry, cloud synchronization, remote backup, provider authentication, or external data transmission.
 
 Future remote synchronization or backup work must establish its own Identity, Privacy Shield, Wardveil Security, Everkeep, and provider authorization boundaries before being exposed as available.
 
 ## Validation boundary
 
-Passing source tests or successfully opening the schema proves only the tested local-data behavior. It does not establish full library completion, migration acceptance, recovery acceptance, release readiness, production acceptance, or Stable qualification.
+Passing JVM tests, Android lint, APK assembly, or instrumentation tests proves only the behavior each check actually exercises. Runtime emulator evidence does not establish physical-device acceptance, complete local-library behavior, approved schema migrations beyond v1, recovery acceptance, release readiness, production acceptance, or Stable qualification.
