@@ -100,6 +100,8 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    env:
+      ANDROID_AVD_HOME: ${{ runner.temp }}/goreecloud-avd
     steps:
       - uses: actions/checkout@v4
         with:
@@ -130,6 +132,7 @@ jobs:
           set -euo pipefail
           SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
           test -x "$SDKMANAGER"
           test -x "$AVDMANAGER"
 
@@ -138,11 +141,18 @@ jobs:
             "platform-tools" \
             "emulator" \
             "system-images;android-36;google_apis;x86_64"
+          test -x "$EMULATOR"
 
+          mkdir -p "$ANDROID_AVD_HOME"
           echo "no" | "$AVDMANAGER" create avd \
             --force \
             --name goreecloud-api36 \
-            --package "system-images;android-36;google_apis;x86_64"
+            --package "system-images;android-36;google_apis;x86_64" \
+            --path "$ANDROID_AVD_HOME/goreecloud-api36.avd"
+
+          "$AVDMANAGER" list avd | tee build-evidence/avdmanager-list.txt
+          "$EMULATOR" -list-avds | tee build-evidence/emulator-avds.txt
+          grep -Fxq "goreecloud-api36" build-evidence/emulator-avds.txt
 
       - name: Start Android 16 emulator
         shell: bash
@@ -152,6 +162,9 @@ jobs:
           EMULATOR="$ANDROID_HOME/emulator/emulator"
           test -x "$ADB"
           test -x "$EMULATOR"
+          test -d "$ANDROID_AVD_HOME/goreecloud-api36.avd"
+          "$EMULATOR" -list-avds | tee -a build-evidence/emulator-avds.txt
+          grep -Fxq "goreecloud-api36" build-evidence/emulator-avds.txt
 
           if [[ ! -e /dev/kvm ]]; then
             echo "GitHub runner does not expose /dev/kvm; refusing to claim accelerated emulator acceptance." >&2
@@ -219,6 +232,8 @@ jobs:
           name: goreecloud-youtube-player-runtime-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             build-evidence/runtime-source-commit.txt
+            build-evidence/avdmanager-list.txt
+            build-evidence/emulator-avds.txt
             build-evidence/emulator.log
             app/build/reports/androidTests/connected/
             app/build/outputs/androidTest-results/connected/
