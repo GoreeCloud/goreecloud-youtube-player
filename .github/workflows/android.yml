@@ -128,30 +128,36 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SDKMANAGER="$(command -v sdkmanager)"
-          AVDMANAGER="$(command -v avdmanager)"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          AVDMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager"
           test -x "$SDKMANAGER"
           test -x "$AVDMANAGER"
+
           yes | "$SDKMANAGER" --licenses >/dev/null || true
           "$SDKMANAGER" --install \
             "platform-tools" \
             "emulator" \
             "system-images;android-36;google_apis;x86_64"
+
           echo "no" | "$AVDMANAGER" create avd \
             --force \
             --name goreecloud-api36 \
-            --package "system-images;android-36;google_apis;x86_64" \
-            --device "pixel_6"
+            --package "system-images;android-36;google_apis;x86_64"
 
       - name: Start Android 16 emulator
         shell: bash
         run: |
           set -euo pipefail
+          ADB="$ANDROID_HOME/platform-tools/adb"
+          EMULATOR="$ANDROID_HOME/emulator/emulator"
+          test -x "$ADB"
+          test -x "$EMULATOR"
+
           if [[ -e /dev/kvm ]]; then
             sudo chmod 666 /dev/kvm
           fi
 
-          nohup emulator \
+          nohup "$EMULATOR" \
             -avd goreecloud-api36 \
             -no-window \
             -noaudio \
@@ -161,10 +167,10 @@ jobs:
             > build-evidence/emulator.log 2>&1 &
           echo "$!" > build-evidence/emulator.pid
 
-          adb wait-for-device
+          "$ADB" wait-for-device
           BOOTED=""
           for _ in $(seq 1 180); do
-            BOOTED="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+            BOOTED="$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
             if [[ "$BOOTED" == "1" ]]; then
               break
             fi
@@ -172,10 +178,10 @@ jobs:
           done
           test "$BOOTED" = "1"
 
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
-          adb shell input keyevent 82 || true
+          "$ADB" shell settings put global window_animation_scale 0
+          "$ADB" shell settings put global transition_animation_scale 0
+          "$ADB" shell settings put global animator_duration_scale 0
+          "$ADB" shell input keyevent 82 || true
 
       - name: Run SQLite runtime acceptance tests
         run: gradle :app:connectedDebugAndroidTest --stacktrace
@@ -196,4 +202,4 @@ jobs:
       - name: Stop emulator
         if: always()
         shell: bash
-        run: adb emu kill || true
+        run: "$ANDROID_HOME/platform-tools/adb" emu kill || true
