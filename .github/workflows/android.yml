@@ -100,8 +100,6 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 35
-    env:
-      ANDROID_AVD_HOME: ${{ runner.temp }}/goreecloud-avd
     steps:
       - uses: actions/checkout@v4
         with:
@@ -126,6 +124,15 @@ jobs:
         with:
           gradle-version: '9.5.0'
 
+      - name: Configure Android AVD home
+        shell: bash
+        run: |
+          set -euo pipefail
+          AVD_HOME="$RUNNER_TEMP/goreecloud-avd"
+          mkdir -p "$AVD_HOME"
+          printf 'ANDROID_AVD_HOME=%s\n' "$AVD_HOME" >> "$GITHUB_ENV"
+          printf '%s\n' "$AVD_HOME" | tee build-evidence/android-avd-home.txt
+
       - name: Install Android emulator image
         shell: bash
         run: |
@@ -143,7 +150,6 @@ jobs:
             "system-images;android-36;google_apis;x86_64"
           test -x "$EMULATOR"
 
-          mkdir -p "$ANDROID_AVD_HOME"
           echo "no" | "$AVDMANAGER" create avd \
             --force \
             --name goreecloud-api36 \
@@ -232,6 +238,7 @@ jobs:
           name: goreecloud-youtube-player-runtime-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             build-evidence/runtime-source-commit.txt
+            build-evidence/android-avd-home.txt
             build-evidence/avdmanager-list.txt
             build-evidence/emulator-avds.txt
             build-evidence/emulator.log
