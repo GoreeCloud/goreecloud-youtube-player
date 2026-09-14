@@ -3,9 +3,7 @@ name: Android foundation validation
 on:
   pull_request:
   push:
-    branches:
-      - main
-      - ci/bootstrap-android-validation
+    branches: [main]
 
 permissions:
   contents: read

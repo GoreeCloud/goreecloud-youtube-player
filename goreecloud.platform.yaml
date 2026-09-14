@@ -1,0 +1,133 @@
+schema_version: '0.2'
+component:
+  type: application
+  id: goreecloud-youtube-player
+  product_name: GoreeCloud YouTube Player
+  repository: GoreeCloud/goreecloud-youtube-player
+lifecycle: development
+version: '0.1.0-dev'
+license: unassigned
+supported_platforms:
+- android
+api:
+  versions: []
+  endpoints: []
+platform_systems:
+  manager:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - SPECIFICATIONS.md
+    - docs/PLATFORM-INTEGRATIONS.md
+    notes: Administration, configuration, lifecycle, and operational integration are planned but not implemented.
+  privacy_shield:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - PRIVACY POLICY.md
+    - docs/PLATFORM-INTEGRATIONS.md
+    notes: The foundation minimizes data/network authority but has no accepted runtime Privacy Shield integration.
+  wardveil_security:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - SECURITY.md
+    - docs/PLATFORM-INTEGRATIONS.md
+    notes: The source minimizes bootstrap attack surface but has no accepted Wardveil runtime integration.
+  everkeep:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - FEATURE-ROADMAP.md
+    - docs/PLATFORM-INTEGRATIONS.md
+    notes: Android automatic backup is disabled; accepted backup/restore/recovery behavior is not implemented.
+  glaze_ui:
+    result: applicable-migration-required
+    version: 1.3.0
+    evidence:
+    - README.md
+    - docs/ARCHITECTURE.md
+    - app/src/main/java/com/goreecloud/youtubeplayer/ui/GoreeCloudYouTubePlayerApp.kt
+    notes: 1.3.0 is the current published Stable consumer target. The current Compose/Material foundation is not accepted Glaze UI application conformance.
+  mesh:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - SPECIFICATIONS.md
+    - docs/PLATFORM-INTEGRATIONS.md
+    notes: No runtime Mesh capabilities, transport, or events are implemented.
+    capabilities: []
+    dependencies: []
+    published_events: []
+    consumed_events: []
+  identity:
+    result: applicable-blocked
+    version: null
+    evidence:
+    - SPECIFICATIONS.md
+    - SECURITY.md
+    notes: No production account, session, credential, or authorization integration is implemented.
+health:
+  health_endpoint: null
+  readiness_endpoint: null
+continuity:
+  backup:
+    required: true
+    requirements:
+    - Define and accept Everkeep protection before durable user state becomes production-dependent.
+  restore:
+    required: true
+    requirements:
+    - Verify restoration integrity, authorization, and privacy lifecycle behavior before recovery-ready claims.
+  export:
+    required: true
+    requirements:
+    - Provide versioned user-controlled portable export for applicable local state.
+  portability:
+    required: true
+    requirements:
+    - Preserve provider-neutral identities and understandable portable local state formats.
+external_dependencies:
+- name: Gradle
+  required: true
+  status: development-build
+  version: 9.5.0
+- name: Android Gradle Plugin
+  required: true
+  status: development-build
+  version: 9.3.0
+- name: Jetpack Compose
+  required: true
+  status: development-ui-substrate
+  version: '2026.08.00'
+compatibility:
+  platform_contract: '0.2'
+  glaze_ui_required: 1.3.0
+  requires:
+  - goreecloud-platform-contract==0.2
+  - glaze-ui==1.3.0
+  provides:
+  - goreecloud-youtube-player-android-foundation
+evidence:
+  acceptance_tests:
+  - .github/workflows/android.yml
+  - app/src/test/java/com/goreecloud/youtubeplayer/provider/CapabilityResolverTest.kt
+  release: []
+conformance:
+  status: nonconformant
+  validated_at: null
+  evidence:
+  - README.md
+  - SPECIFICATIONS.md
+  - FEATURES.md
+  - FEATURE-ROADMAP.md
+  - SECURITY.md
+  - PRIVACY POLICY.md
+  - docs/ARCHITECTURE.md
+  - docs/PLATFORM-INTEGRATIONS.md
+  blockers:
+  - Remote provider support and production playback are not implemented.
+  - Planned Linux and Android TV / Google TV expansion targets are not implemented.
+  - Runtime Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Identity, GoreeCloud Mesh, and GoreeCloud Manager integrations are incomplete.
+  - Current Glaze UI application conformance is not established.
+  - Accessibility, representative-device, signing/distribution, recovery, rollback, and production acceptance are incomplete.

@@ -1,0 +1,33 @@
+{
+  "contract": "goreecloud.youtube-player.provider-capabilities",
+  "version": 1,
+  "capabilityStates": [
+    "AVAILABLE",
+    "SUPPORTED",
+    "UNSUPPORTED",
+    "OFFLINE",
+    "RESTRICTED",
+    "PERMISSION_REQUIRED",
+    "TEMPORARILY_UNAVAILABLE",
+    "DEGRADED",
+    "DISABLED",
+    "UNKNOWN"
+  ],
+  "capabilities": [
+    "SEARCH",
+    "CHANNELS",
+    "RSS_SUBSCRIPTIONS",
+    "PLAYBACK",
+    "CAPTIONS",
+    "QUALITY_SELECTION",
+    "LIVE_STREAMS",
+    "CASTING",
+    "OFFLINE_MEDIA",
+    "LOCAL_LIBRARY"
+  ],
+  "rules": {
+    "missingDeclaration": "UNKNOWN",
+    "consumerMayUpgradeProviderState": false,
+    "reasonRequiredForNonActionableState": true
+  }
+}
