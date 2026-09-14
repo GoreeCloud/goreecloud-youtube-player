@@ -94,3 +94,106 @@ jobs:
             build-evidence/app-debug.badging.txt
           if-no-files-found: error
           retention-days: 14
+
+  runtime-local-data:
+    name: Android runtime local-data acceptance
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Record exact runtime source revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPECTED_SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+          ACTUAL_SHA="$(git rev-parse HEAD)"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA"
+          mkdir -p build-evidence
+          printf '%s\n' "$ACTUAL_SHA" | tee build-evidence/runtime-source-commit.txt
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.0'
+
+      - name: Install Android emulator image
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$(command -v sdkmanager)"
+          AVDMANAGER="$(command -v avdmanager)"
+          test -x "$SDKMANAGER"
+          test -x "$AVDMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --install \
+            "platform-tools" \
+            "emulator" \
+            "system-images;android-36;google_apis;x86_64"
+          echo "no" | "$AVDMANAGER" create avd \
+            --force \
+            --name goreecloud-api36 \
+            --package "system-images;android-36;google_apis;x86_64" \
+            --device "pixel_6"
+
+      - name: Start Android 16 emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -e /dev/kvm ]]; then
+            sudo chmod 666 /dev/kvm
+          fi
+
+          nohup emulator \
+            -avd goreecloud-api36 \
+            -no-window \
+            -noaudio \
+            -no-boot-anim \
+            -no-snapshot \
+            -gpu swiftshader_indirect \
+            > build-evidence/emulator.log 2>&1 &
+          echo "$!" > build-evidence/emulator.pid
+
+          adb wait-for-device
+          BOOTED=""
+          for _ in $(seq 1 180); do
+            BOOTED="$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+            if [[ "$BOOTED" == "1" ]]; then
+              break
+            fi
+            sleep 2
+          done
+          test "$BOOTED" = "1"
+
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb shell input keyevent 82 || true
+
+      - name: Run SQLite runtime acceptance tests
+        run: gradle :app:connectedDebugAndroidTest --stacktrace
+
+      - name: Upload runtime acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goreecloud-youtube-player-runtime-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            build-evidence/runtime-source-commit.txt
+            build-evidence/emulator.log
+            app/build/reports/androidTests/connected/
+            app/build/outputs/androidTest-results/connected/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Stop emulator
+        if: always()
+        shell: bash
+        run: adb emu kill || true
