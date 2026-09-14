@@ -6,6 +6,7 @@ GoreeCloud YouTube Player is an original GoreeCloud-owned native application for
 
 **Lifecycle:** Active Development / pre-Stable  
 **Repository:** `GoreeCloud/goreecloud-youtube-player`  
+**Repository recovery:** Restored on September 14, 2026 after deletion; post-restoration exact-head CI must pass before integration  
 **Initial executable target:** Android phones/tablets; Android TV/Google TV adaptation follows the Android foundation  
 **Planned additional target:** Linux desktop  
 **Glaze UI target:** 1.4.0 (integration and conformance are not yet validated)
