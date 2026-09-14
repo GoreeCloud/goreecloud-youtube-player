@@ -22,7 +22,7 @@ import com.goreecloud.youtubeplayer.domain.ProviderCapability
 import com.goreecloud.youtubeplayer.provider.CapabilityResolver
 import com.goreecloud.youtubeplayer.provider.local.LocalDemoProvider
 
-private const val GLAZE_TARGET = "1.4.0"
+private const val GLAZE_TARGET = "1.3.0"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

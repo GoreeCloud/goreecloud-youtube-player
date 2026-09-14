@@ -58,7 +58,7 @@ The bootstrap disables Android automatic backup because Everkeep/recovery author
 
 The executable bootstrap currently uses Jetpack Compose/Material 3 as an implementation substrate so the native shell can compile and be tested. That is **not** evidence of Glaze UI conformance.
 
-The current authoritative GoreeCloud target is Glaze UI 1.4.0. The app must receive a verified Glaze UI 1.4.0 mapping/integration and complete applicable visual, behavioral, accessibility, form-factor, and runtime acceptance before Stable eligibility.
+The current published Official/Stable/consumer-eligible GoreeCloud target for this revision is Glaze UI 1.3.0. The app must receive a verified current Glaze UI mapping/integration and complete applicable visual, behavioral, accessibility, form-factor, and runtime acceptance before Stable eligibility.
 
 The temporary shell should therefore remain simple and semantically structured. Product-specific visual polish should be added through the canonical Glaze UI contract rather than creating a competing local design system.
 
@@ -86,7 +86,7 @@ The bootstrap uses `com.goreecloud.youtubeplayer` with the standard Development 
 2. Implement search/library UI against interfaces rather than provider-specific code.
 3. Establish RSS subscription parsing/refresh behind a feed provider boundary.
 4. Define media-source/playback contracts before implementing a remote provider.
-5. Integrate Glaze UI 1.4.0 through its authoritative consumer contract and verify rendered behavior.
+5. Integrate the current published Stable Glaze UI release through its authoritative consumer contract and verify rendered behavior.
 6. Add Privacy Shield, Wardveil Security, Everkeep, Manager, Mesh, and Identity contracts according to their current authoritative interfaces.
 7. Add Android TV input/focus adaptation and real-device acceptance.
 8. Establish the Linux desktop client using a separately validated native technology choice while preserving the language-neutral provider contracts.

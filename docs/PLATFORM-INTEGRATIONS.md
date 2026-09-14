@@ -8,7 +8,7 @@ This record describes the source state of this repository. A favorable platform-
 | Privacy Shield | Planned | No | Purpose limitation, minimization, authorization, telemetry/privacy controls and truthful privacy state |
 | Wardveil Security | Planned | No | Security policy, protection state, trust decisions and security evidence where applicable |
 | Everkeep | Planned | No | Backup, restore, portability, recovery and continuity for applicable durable local state |
-| Glaze UI | Integration planned; target 1.4.0 | No | Canonical GoreeCloud visual/interaction system; mandatory current-version acceptance before Stable eligibility |
+| Glaze UI | Integration planned; target 1.3.0 (current published Official/Stable/consumer-eligible release) | No | Canonical GoreeCloud visual/interaction system; mandatory current-version acceptance before Stable eligibility |
 | GoreeCloud Mesh | Planned | No | Approved coordination/interoperability between GoreeCloud products where applicable |
 | GoreeCloud Identity | Planned | No | Optional/required identity, account, session and authorization context where applicable |
 
