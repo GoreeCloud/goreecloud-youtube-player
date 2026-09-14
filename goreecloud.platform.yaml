@@ -127,7 +127,7 @@ conformance:
   - docs/PLATFORM-INTEGRATIONS.md
   blockers:
   - Remote provider support and production playback are not implemented.
-  - Mandatory web and Linux delivery targets are not implemented.
+  - Planned Linux and Android TV / Google TV expansion targets are not implemented.
   - Runtime Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Identity, GoreeCloud Mesh, and GoreeCloud Manager integrations are incomplete.
   - Current Glaze UI application conformance is not established.
   - Accessibility, representative-device, signing/distribution, recovery, rollback, and production acceptance are incomplete.

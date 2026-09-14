@@ -3,7 +3,7 @@
 **Lifecycle:** Development  
 **Scope:** current verified Android foundation only
 
-This manual intentionally documents only behavior that exists in the current foundation candidate. Planned YouTube playback, account, RSS, library, web, television, and Linux features are not described as available.
+This manual intentionally documents only behavior that exists in the current foundation candidate. Planned YouTube playback, account, RSS, Linux, television, and cloud capabilities are not described as available.
 
 ## Current availability
 
@@ -34,15 +34,12 @@ The current foundation does not provide:
 
 - YouTube sign-in or account access;
 - remote YouTube search or metadata retrieval;
-- production video playback;
-- RSS subscriptions;
-- casting;
-- downloads;
+- production video playback, downloads, casting, or RSS subscriptions;
 - persistent runtime watch history/resume state in the foundation candidate;
 - cloud synchronization;
-- Android TV acceptance;
-- web application;
-- Linux client;
+- Linux Desktop client, which is planned as the first platform expansion after Android;
+- Android TV / Google TV client, which is planned after Linux expansion;
+- any additional client platform unless separately approved later;
 - production Privacy Shield, Wardveil, Everkeep, Identity, Mesh, or Manager integration;
 - accepted Glaze UI conformance.
 
@@ -58,4 +55,4 @@ If a capability is shown as `UNKNOWN`, that is intentional fail-closed behavior 
 
 ## Future manual expansion
 
-This manual must expand only as features become implemented and verified. Planned workflows from the canonical product specification should not be copied here as though they are available.
+This manual must expand only as features are implemented and verified. Planned workflows from the canonical product specification and feature roadmap must not be copied here as though they are available.
