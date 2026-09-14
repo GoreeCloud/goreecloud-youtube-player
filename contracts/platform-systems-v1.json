@@ -1,0 +1,14 @@
+{
+  "contract": "goreecloud.youtube-player.platform-systems",
+  "version": 1,
+  "productLifecycle": "ACTIVE_DEVELOPMENT",
+  "systems": [
+    {"name": "GoreeCloud Manager", "state": "PLANNED"},
+    {"name": "Privacy Shield", "state": "PLANNED"},
+    {"name": "Wardveil Security", "state": "PLANNED"},
+    {"name": "Everkeep", "state": "PLANNED"},
+    {"name": "Glaze UI", "state": "INTEGRATION_PLANNED", "targetVersion": "1.4.0", "accepted": false},
+    {"name": "GoreeCloud Mesh", "state": "PLANNED"},
+    {"name": "GoreeCloud Identity", "state": "PLANNED"}
+  ]
+}
