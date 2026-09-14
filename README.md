@@ -7,9 +7,10 @@ GoreeCloud YouTube Player is an original GoreeCloud-owned native application for
 **Lifecycle:** Active Development / pre-Stable  
 **Repository:** `GoreeCloud/goreecloud-youtube-player`  
 **Repository recovery:** Repository restored September 14, 2026; default-branch CI recovery has been integrated and exact-head validated  
-**Current executable target:** Android phones/tablets Development foundation  
-**Mandatory planned delivery targets:** Android, first-class web application, supported Linux deployment  
-**Additional planned form factor:** Android TV / Google TV  
+**Initial availability target:** Android phones/tablets  
+**First planned expansion:** Linux Desktop  
+**Second planned expansion:** Android TV / Google TV  
+**Additional platforms:** Require a separate product decision and authorization  
 **Glaze UI target:** 1.3.0 — current published Official/Stable/consumer-eligible release; application integration and conformance are not yet validated
 
 This repository is not a fork of another video application and does not wrap the YouTube website as its application architecture.
@@ -38,7 +39,7 @@ The current foundation intentionally contains no YouTube authentication, scrapin
 5. UI claims must reflect accepted runtime capability and Platform-System evidence.
 6. Glaze UI 1.3.0 is the current published Official/Stable/consumer-eligible design-system target for this revision, but the foundation is not Glaze-conformant until integration and acceptance are verified.
 7. Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Manager, GoreeCloud Mesh, and GoreeCloud Identity remain blocked/planned integration boundaries until implemented and validated.
-8. Mandatory future web and Linux delivery paths must share authoritative domain/data contracts without turning native clients into web wrappers.
+8. Android is the initial client target. Linux is the first planned expansion, followed by Android TV / Google TV. Shared contracts must not turn native clients into web wrappers or erase platform-specific behavior.
 
 ## Repository documentation
 
