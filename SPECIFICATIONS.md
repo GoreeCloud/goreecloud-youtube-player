@@ -6,12 +6,13 @@
 **Repository:** `GoreeCloud/goreecloud-youtube-player`  
 **Repository lifecycle:** Active Development / pre-Stable  
 **Canonical product specification:** GoreeCloud Drive → Projects → `Project Specification — YouTube Player.docx`  
-**Current executable target:** Android phone/tablet Development foundation  
-**Mandatory delivery targets:** Android application, first-class web application, supported Linux deployment  
-**Additional planned form factor:** Android TV / Google TV  
+**Initial platform:** Android phone/tablet  
+**First expansion platform:** Linux Desktop  
+**Second expansion platform:** Android TV / Google TV  
+**Additional platforms:** Separate product decision required  
 **Current published Glaze UI target:** 1.3.0; application integration and conformance are not yet accepted
 
-This file is the repository-local, version-coupled summary of the canonical GoreeCloud product specification and current governing delivery requirements. When this file conflicts with higher-authority GoreeCloud governance or the canonical Drive specification, the controlling authoritative requirement governs and this file must be reconciled.
+This file is the repository-local, version-coupled summary of the canonical GoreeCloud product specification and current governing requirements. When this file conflicts with higher-authority GoreeCloud governance or the canonical Drive specification, the controlling authoritative requirement governs and this file must be reconciled.
 
 ## Product purpose
 
@@ -23,13 +24,16 @@ The governing product principle is:
 
 The product must remain GoreeCloud-owned software rather than a WebView wrapper or inherited complete third-party application codebase.
 
-## Delivery model
+## Ordered delivery model
 
-The current implementation begins with native Android. GoreeCloud delivery governance also requires a first-class web application and a supported Linux deployment. These are Development obligations, not claims that those clients already exist.
+The product rollout is deliberately staged:
 
-Android TV / Google TV is an additional planned form factor and must receive focus/input/layout behavior appropriate to television rather than a stretched phone interface.
+1. Android phone/tablet is the initial availability and current Development target.
+2. Linux Desktop is the first planned platform expansion after the Android foundation reaches appropriate Development maturity.
+3. Android TV / Google TV follows Linux and must receive television-specific focus, input, layout, and remote-control behavior rather than a stretched phone interface.
+4. Any additional platform requires a separate product decision and authorization.
 
-Native clients may share domain models, APIs, protocols, design tokens, data formats, and non-UI components, but platform-specific clients must not be reduced to web wrappers for code-reuse convenience.
+Native clients may share domain models, APIs, protocols, design tokens, data formats, and non-UI components, but platform-specific clients must preserve platform-appropriate behavior and must not be reduced to web wrappers for code-reuse convenience.
 
 ## Required architecture boundaries
 
@@ -47,7 +51,7 @@ Provider capabilities must be explicit. Missing declarations fail to `UNKNOWN`; 
 
 User-organized state should remain locally controlled wherever practical. Planned local state includes watch history, resume positions, favorites, bookmarks, custom playlists, channel follows, search history, notes, tags, feed organization, and UI preferences.
 
-The foundation source defines schema-v1 for local library-oriented state. Runtime persistence and portable interchange are being developed separately in stacked Milestone 2 work and are not part of the foundation candidate until independently validated and integrated.
+The foundation source defines schema-v1 for local library-oriented state. Runtime persistence and portable interchange are being developed separately in stacked Milestone 1 work and are not part of the foundation candidate until independently validated and integrated.
 
 ### Network and privacy boundary
 
@@ -90,9 +94,8 @@ The foundation does **not** implement or prove:
 - RSS subscription refresh;
 - downloads/offline YouTube media;
 - casting;
-- web application implementation;
-- Android TV acceptance;
 - Linux client implementation;
+- Android TV / Google TV implementation or acceptance;
 - telemetry;
 - Privacy Shield enforcement;
 - Wardveil enforcement;
@@ -103,9 +106,9 @@ The foundation does **not** implement or prove:
 
 ## Planned capability families
 
-The canonical product specification plans native Home/discovery, search, channels, RSS subscriptions, chronological subscription inbox, media playback, picture-in-picture, queues, local library/organization, Shorts controls, live awareness, notifications, notes/tags, authorized offline/local-media behavior, URL/share integration, casting, Android TV, Linux, accessibility/input adaptation, provider failure isolation, caching, diagnostics, and evidence-backed GoreeCloud ecosystem integration.
+The canonical product specification plans native Home/discovery, search, channels, RSS subscriptions, chronological subscription inbox, media playback, picture-in-picture, queues, local library/organization, Shorts controls, live awareness, notifications, notes/tags, authorized offline/local-media behavior, URL/share integration, casting, Linux expansion, Android TV / Google TV expansion, accessibility/input adaptation, provider failure isolation, caching, diagnostics, and evidence-backed GoreeCloud ecosystem integration.
 
-The mandatory delivery roadmap additionally includes a first-class web client. None of these planned capability families may be represented as implemented merely because they appear in documentation.
+None of these planned capability families may be represented as implemented merely because they appear in documentation.
 
 ## Stable eligibility
 
