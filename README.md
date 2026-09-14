@@ -37,7 +37,14 @@ The current bootstrap intentionally contains no YouTube authentication, scraping
 6. Glaze UI 1.3.0 is the current published Official/Stable/consumer-eligible design-system target for this revision, but this bootstrap must not be described as Glaze-conformant until its integration and acceptance are verified.
 7. Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Manager, GoreeCloud Mesh, and GoreeCloud Identity remain planned integration boundaries until implemented and validated.
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/PLATFORM-INTEGRATIONS.md`](docs/PLATFORM-INTEGRATIONS.md).
+## Repository documentation
+
+- [`SPECIFICATIONS.md`](SPECIFICATIONS.md) — repository-local, version-coupled product and architecture requirements.
+- [`FEATURES.md`](FEATURES.md) — implemented versus planned capabilities.
+- [`BENEFITS.md`](BENEFITS.md) — current architectural benefits and intended user benefits.
+- [`COMPETITIVE-OBJECTIVES.md`](COMPETITIVE-OBJECTIVES.md) — product objectives without unsupported superiority claims.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — current source architecture.
+- [`docs/PLATFORM-INTEGRATIONS.md`](docs/PLATFORM-INTEGRATIONS.md) — truthful Integral Platform System status.
 
 ## Build validation
 
