@@ -26,25 +26,43 @@ jobs:
           mkdir -p build-evidence
           printf '%s\n' "$ACTUAL_SHA" | tee build-evidence/source-commit.txt
 
+      - name: Detect Android application source
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f app/build.gradle.kts ]]; then
+            echo "android_source=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "android_source=false" >> "$GITHUB_OUTPUT"
+            echo "No Android application source exists at this revision; validating CI bootstrap only."
+          fi
+
       - uses: actions/setup-java@v4
+        if: steps.source.outputs.android_source == 'true'
         with:
           distribution: temurin
           java-version: '17'
 
       - uses: gradle/actions/setup-gradle@v4
+        if: steps.source.outputs.android_source == 'true'
         with:
           gradle-version: '9.5.0'
 
       - name: Unit tests
+        if: steps.source.outputs.android_source == 'true'
         run: gradle :app:testDebugUnitTest
 
       - name: Lint
+        if: steps.source.outputs.android_source == 'true'
         run: gradle :app:lintDebug
 
       - name: Assemble development APK
+        if: steps.source.outputs.android_source == 'true'
         run: gradle :app:assembleDebug
 
       - name: Verify development APK identity
+        if: steps.source.outputs.android_source == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -60,11 +78,12 @@ jobs:
           grep -Fq "application-label:'GoreeCloud YouTube Player Dev'" build-evidence/app-debug.badging.txt
 
           if grep -Fq "uses-permission: name='android.permission.INTERNET'" build-evidence/app-debug.badging.txt; then
-            echo "Bootstrap APK unexpectedly requests INTERNET permission" >&2
+            echo "Development APK unexpectedly requests INTERNET permission" >&2
             exit 1
           fi
 
       - name: Upload development build evidence
+        if: steps.source.outputs.android_source == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: goreecloud-youtube-player-android-${{ github.event.pull_request.head.sha || github.sha }}

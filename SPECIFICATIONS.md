@@ -6,11 +6,12 @@
 **Repository:** `GoreeCloud/goreecloud-youtube-player`  
 **Repository lifecycle:** Active Development / pre-Stable  
 **Canonical product specification:** GoreeCloud Drive → Projects → `Project Specification — YouTube Player.docx`  
-**Current executable target:** Android phone/tablet development foundation  
-**Planned primary platforms:** Android, Android TV / Google TV, Linux Desktop  
+**Current executable target:** Android phone/tablet Development foundation  
+**Mandatory delivery targets:** Android application, first-class web application, supported Linux deployment  
+**Additional planned form factor:** Android TV / Google TV  
 **Current published Glaze UI target:** 1.3.0; application integration and conformance are not yet accepted
 
-This file is the repository-local, version-coupled summary of the canonical GoreeCloud product specification. The Drive specification remains the controlling product/architecture record when this summary and the canonical document differ.
+This file is the repository-local, version-coupled summary of the canonical GoreeCloud product specification and current governing delivery requirements. When this file conflicts with higher-authority GoreeCloud governance or the canonical Drive specification, the controlling authoritative requirement governs and this file must be reconciled.
 
 ## Product purpose
 
@@ -20,13 +21,21 @@ The governing product principle is:
 
 > GoreeCloud owns the application experience. Providers supply bounded content and capabilities. Glaze UI presents accepted capabilities truthfully.
 
-The application is designed to remain GoreeCloud-owned software rather than a WebView wrapper or inherited complete third-party application codebase.
+The product must remain GoreeCloud-owned software rather than a WebView wrapper or inherited complete third-party application codebase.
+
+## Delivery model
+
+The current implementation begins with native Android. GoreeCloud delivery governance also requires a first-class web application and a supported Linux deployment. These are Development obligations, not claims that those clients already exist.
+
+Android TV / Google TV is an additional planned form factor and must receive focus/input/layout behavior appropriate to television rather than a stretched phone interface.
+
+Native clients may share domain models, APIs, protocols, design tokens, data formats, and non-UI components, but platform-specific clients must not be reduced to web wrappers for code-reuse convenience.
 
 ## Required architecture boundaries
 
 ### Native application boundary
 
-Navigation, application state, library, settings, search surfaces, history, playlists, subscriptions, notifications, and player controls are intended to be native GoreeCloud experiences.
+Navigation, application state, library, settings, search surfaces, history, playlists, subscriptions, notifications, and player controls are intended to be GoreeCloud-owned experiences.
 
 ### Provider boundary
 
@@ -38,7 +47,7 @@ Provider capabilities must be explicit. Missing declarations fail to `UNKNOWN`; 
 
 User-organized state should remain locally controlled wherever practical. Planned local state includes watch history, resume positions, favorites, bookmarks, custom playlists, channel follows, search history, notes, tags, feed organization, and UI preferences.
 
-The foundation source currently defines schema-v1 for local library-oriented state. Runtime persistence and portable interchange are being developed separately in stacked Milestone 2 work and are not part of the foundation merge candidate until independently validated and integrated.
+The foundation source defines schema-v1 for local library-oriented state. Runtime persistence and portable interchange are being developed separately in stacked Milestone 2 work and are not part of the foundation candidate until independently validated and integrated.
 
 ### Network and privacy boundary
 
@@ -58,7 +67,7 @@ The architecture evaluates all seven GoreeCloud Integral Platform Systems indepe
 6. GoreeCloud Mesh
 7. GoreeCloud Identity
 
-Except for the documented Glaze target, these remain planned integration boundaries in the foundation. A contract file, UI label, or dependency name is not evidence of runtime acceptance.
+All seven remain unaccepted for this application. Glaze UI 1.3.0 is the current required consumer target, but targeting a version is not conformance. A contract file, UI label, dependency, or planned integration is not evidence of runtime acceptance.
 
 ## Foundation implementation state
 
@@ -68,10 +77,10 @@ The current foundation candidate implements:
 - provider-neutral video domain model;
 - explicit provider capability states and decisions;
 - `ContentProvider` contract;
-- deterministic, network-free `LocalDemoProvider` for development only;
+- deterministic, network-free `LocalDemoProvider` for Development only;
 - versioned local SQLite schema contract;
 - language-neutral provider and platform-system contracts;
-- Android validation workflow definition;
+- exact-source Android validation workflow;
 - truthful platform-integration status documentation.
 
 The foundation does **not** implement or prove:
@@ -81,41 +90,23 @@ The foundation does **not** implement or prove:
 - RSS subscription refresh;
 - downloads/offline YouTube media;
 - casting;
+- web application implementation;
 - Android TV acceptance;
 - Linux client implementation;
 - telemetry;
 - Privacy Shield enforcement;
 - Wardveil enforcement;
 - Everkeep recovery;
-- GoreeCloud Identity or Mesh integration;
+- GoreeCloud Identity, Mesh, or Manager runtime integration;
 - Glaze UI conformance;
 - release, production, or Stable qualification.
 
-## Planned product capability families
+## Planned capability families
 
-The canonical product specification plans capability families including:
+The canonical product specification plans native Home/discovery, search, channels, RSS subscriptions, chronological subscription inbox, media playback, picture-in-picture, queues, local library/organization, Shorts controls, live awareness, notifications, notes/tags, authorized offline/local-media behavior, URL/share integration, casting, Android TV, Linux, accessibility/input adaptation, provider failure isolation, caching, diagnostics, and evidence-backed GoreeCloud ecosystem integration.
 
-- native Home and discovery surfaces;
-- native video/channel/playlist/local-library search;
-- native channel profiles;
-- RSS-based channel following and chronological subscription inbox;
-- native playback controls, seeking, speed control, captions, quality selection and media integration where supported;
-- picture-in-picture and background playback where permitted;
-- queue management;
-- local library, playlists, collections, Watch Later, favorites, history and Continue Watching;
-- Shorts controls, live-stream awareness and optional live chat;
-- granular notifications;
-- local notes and tags;
-- authorized offline/local-media behavior;
-- URL/share integration and capability-aware casting;
-- Android phone/tablet and purpose-built Android TV / Google TV experiences;
-- Linux desktop support;
-- accessibility, keyboard, touch and remote-control adaptation;
-- provider capability resolution, failure isolation, cache/offline behavior and diagnostics;
-- optional GoreeCloud ecosystem integrations only after their own implementation and acceptance gates.
-
-These are planned requirements, not claims that the current source implements them.
+The mandatory delivery roadmap additionally includes a first-class web client. None of these planned capability families may be represented as implemented merely because they appear in documentation.
 
 ## Stable eligibility
 
-A successful source build is development evidence only. Stable eligibility requires the exact release candidate to satisfy all applicable GoreeCloud release, current Glaze UI, accessibility, privacy, security, resilience, platform, signing/distribution, documentation, observability, physical-device, and production-readiness gates.
+A successful source build is Development evidence only. Stable eligibility requires the exact release candidate to satisfy all applicable native-development, current Glaze UI, accessibility, privacy, security, resilience, platform, signing/distribution, documentation, observability, recovery, physical-device, and production-readiness gates.
