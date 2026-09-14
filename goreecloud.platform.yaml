@@ -25,22 +25,25 @@ platform_systems:
     version: null
     evidence:
     - PRIVACY POLICY.md
+    - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: The foundation minimizes data/network authority but has no accepted runtime Privacy Shield integration.
+    notes: Local progress persistence is a Development candidate, but accepted runtime Privacy Shield authorization is not implemented.
   wardveil_security:
     result: applicable-blocked
     version: null
     evidence:
     - SECURITY.md
+    - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: The source minimizes bootstrap attack surface but has no accepted Wardveil runtime integration.
+    notes: Local parsing and persistence validation exist in Development source; accepted Wardveil runtime integration is not implemented.
   everkeep:
     result: applicable-blocked
     version: null
     evidence:
     - FEATURE-ROADMAP.md
+    - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: Android automatic backup is disabled; accepted backup/restore/recovery behavior is not implemented.
+    notes: Android automatic backup remains disabled and accepted backup/restore/recovery behavior is not implemented.
   glaze_ui:
     result: applicable-migration-required
     version: 1.3.0
@@ -48,7 +51,7 @@ platform_systems:
     - README.md
     - docs/ARCHITECTURE.md
     - app/src/main/java/com/goreecloud/youtubeplayer/ui/GoreeCloudYouTubePlayerApp.kt
-    notes: 1.3.0 is the current published Stable consumer target. The current Compose/Material foundation is not accepted Glaze UI application conformance.
+    notes: 1.3.0 is the current published Stable consumer target. Application conformance remains unaccepted.
   mesh:
     result: applicable-blocked
     version: null
@@ -82,11 +85,11 @@ continuity:
   export:
     required: true
     requirements:
-    - Provide versioned user-controlled portable export for applicable local state.
+    - Current Development candidate provides versioned progress export/import; user-facing acceptance and broader state coverage remain required.
   portability:
     required: true
     requirements:
-    - Preserve provider-neutral identities and understandable portable local state formats.
+    - Preserve provider-neutral identities and understandable versioned local-state formats.
 external_dependencies:
 - name: Gradle
   required: true
@@ -108,10 +111,13 @@ compatibility:
   - glaze-ui==1.3.0
   provides:
   - goreecloud-youtube-player-android-foundation
+  - goreecloud-youtube-player-local-progress-data-candidate
 evidence:
   acceptance_tests:
   - .github/workflows/android.yml
   - app/src/test/java/com/goreecloud/youtubeplayer/provider/CapabilityResolverTest.kt
+  - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryInterchangeV1CodecTest.kt
+  - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryPortabilityServiceTest.kt
   release: []
 conformance:
   status: nonconformant
@@ -124,9 +130,11 @@ conformance:
   - SECURITY.md
   - PRIVACY POLICY.md
   - docs/ARCHITECTURE.md
+  - docs/LOCAL-DATA.md
   - docs/PLATFORM-INTEGRATIONS.md
   blockers:
   - Remote provider support and production playback are not implemented.
+  - Local-data Privacy Shield and Everkeep acceptance are incomplete.
   - Planned Linux and Android TV / Google TV expansion targets are not implemented.
   - Runtime Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Identity, GoreeCloud Mesh, and GoreeCloud Manager integrations are incomplete.
   - Current Glaze UI application conformance is not established.

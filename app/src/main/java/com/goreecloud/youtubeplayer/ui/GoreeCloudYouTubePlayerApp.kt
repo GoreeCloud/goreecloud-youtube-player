@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.goreecloud.youtubeplayer.data.LocalLibrarySummary
 import com.goreecloud.youtubeplayer.domain.ProviderCapability
 import com.goreecloud.youtubeplayer.provider.CapabilityResolver
 import com.goreecloud.youtubeplayer.provider.local.LocalDemoProvider
@@ -26,7 +27,9 @@ private const val GLAZE_TARGET = "1.3.0"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GoreeCloudYouTubePlayerApp() {
+fun GoreeCloudYouTubePlayerApp(
+    localLibrarySummary: LocalLibrarySummary,
+) {
     val provider = remember { LocalDemoProvider() }
     val resolver = remember { CapabilityResolver() }
     val decisions = remember(provider, resolver) {
@@ -62,6 +65,10 @@ fun GoreeCloudYouTubePlayerApp() {
                         )
                         Text(
                             text = "Glaze UI target: $GLAZE_TARGET — conformance pending",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Text(
+                            text = "Local data core: SQLite schema ${localLibrarySummary.schemaVersion} ready — ${localLibrarySummary.watchHistoryCount} history entries, ${localLibrarySummary.resumePositionCount} resume positions.",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(

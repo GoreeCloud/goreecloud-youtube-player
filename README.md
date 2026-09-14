@@ -6,71 +6,56 @@ GoreeCloud YouTube Player is an original GoreeCloud-owned native application for
 
 **Lifecycle:** Active Development / pre-Stable  
 **Repository:** `GoreeCloud/goreecloud-youtube-player`  
-**Repository recovery:** Repository restored September 14, 2026; default-branch CI recovery has been integrated and exact-head validated  
 **Initial availability target:** Android phones/tablets  
 **First planned expansion:** Linux Desktop  
 **Second planned expansion:** Android TV / Google TV  
 **Additional platforms:** Require a separate product decision and authorization  
 **Glaze UI target:** 1.3.0 — current published Official/Stable/consumer-eligible release; application integration and conformance are not yet validated
 
-This repository is not a fork of another video application and does not wrap the YouTube website as its application architecture.
+The Android foundation is integrated on `main`. This Development candidate adds the first durable local-data runtime slice while preserving the provider-independent, network-minimal architecture.
 
-The current foundation intentionally contains no YouTube authentication, scraping, remote playback, remote telemetry, or provider-specific network implementation. It establishes the native Android shell, domain/provider contracts, capability resolution, a deterministic local development provider, a local database schema baseline, truthful Platform-System state, and exact-source CI so later provider work can be added behind controlled boundaries.
-
-## Current implementation slice
+## Integrated foundation
 
 - Native Android application shell using Kotlin and Jetpack Compose.
-- Provider-independent video domain model.
-- Explicit provider capability states and explainable capability decisions.
-- `ContentProvider` boundary and deterministic local development provider.
-- Versioned local SQLite schema contract for library-oriented state.
-- Language-neutral provider capability contract under `contracts/`.
-- GoreeCloud Integral Platform System integration-status record.
-- Android unit-test, lint, and debug-build workflow.
-- No Android `INTERNET` permission in the foundation application.
+- Provider-independent video domain model and explicit capability decisions.
+- `ContentProvider` boundary and deterministic, network-free `LocalDemoProvider`.
+- Versioned schema-v1 contract for local library-oriented state.
+- Exact-source Android CI with unit tests, lint, APK identity checks and no-`INTERNET` guard.
 - Android automatic backup disabled while Everkeep recovery authority remains unimplemented.
+
+## Current local-data candidate
+
+PR #2 adds:
+
+- runtime schema-v1 initialization through `SQLiteLocalLibraryStore`;
+- durable watch-history and resume-position persistence;
+- atomic replacement of validated imported progress state;
+- deterministic `GCYTP-LIBRARY` v1 UTF-8 export/import;
+- SHA-256 integrity, record-count, numeric/range, identity and duplicate validation;
+- Development UI visibility of schema version and local progress counts;
+- unit coverage for interchange and portability behavior.
+
+These local-data capabilities remain Development candidate behavior until PR #2 passes exact-head validation and is intentionally integrated.
 
 ## Architecture principles
 
 1. GoreeCloud owns the application experience and product-defining implementation.
-2. Providers expose bounded content/capability contracts; provider implementation details do not define the app.
-3. Missing provider capability is treated as `UNKNOWN`, never silently upgraded to supported.
-4. Local organizational state is designed to remain useful independently of remote provider availability.
+2. Provider-specific behavior remains behind explicit provider contracts.
+3. Missing provider capability fails to `UNKNOWN` rather than being silently upgraded.
+4. User-organized state is local-first wherever practical.
 5. UI claims must reflect accepted runtime capability and Platform-System evidence.
-6. Glaze UI 1.3.0 is the current published Official/Stable/consumer-eligible design-system target for this revision, but the foundation is not Glaze-conformant until integration and acceptance are verified.
-7. Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Manager, GoreeCloud Mesh, and GoreeCloud Identity remain blocked/planned integration boundaries until implemented and validated.
-8. Android is the initial client target. Linux is the first planned expansion, followed by Android TV / Google TV. Shared contracts must not turn native clients into web wrappers or erase platform-specific behavior.
+6. Glaze UI 1.3.0 is the current consumer target, but application conformance remains unaccepted.
+7. Privacy Shield, Wardveil Security, Everkeep, Manager, Mesh and Identity remain blocked until implemented and validated.
+8. Product rollout remains Android → Linux Desktop → Android TV / Google TV.
 
-## Repository documentation
-
-- [`SPECIFICATIONS.md`](SPECIFICATIONS.md) — repository-local, version-coupled product and architecture requirements.
-- [`FEATURES.md`](FEATURES.md) — implemented versus planned capabilities.
-- [`FEATURE-ROADMAP.md`](FEATURE-ROADMAP.md) — ordered Development roadmap synchronized with the central GoreeCloud roadmap record.
-- [`BENEFITS.md`](BENEFITS.md) — current architectural benefits and intended user benefits.
-- [`COMPETITIVE-OBJECTIVES.md`](COMPETITIVE-OBJECTIVES.md) — product objectives without unsupported superiority claims.
-- [`BRANDING.md`](BRANDING.md) — canonical identity boundary; product-specific artwork is not yet approved.
-- [`USER-MANUAL.md`](USER-MANUAL.md) — current Development behavior only.
-- [`PRIVACY POLICY.md`](PRIVACY%20POLICY.md) — current source-level privacy behavior and future authority boundary.
-- [`SECURITY.md`](SECURITY.md) — security posture, reporting boundary, and non-claims.
-- [`NOTES.md`](NOTES.md) — development/recovery notes and known limitations.
-- [`goreecloud.platform.yaml`](goreecloud.platform.yaml) — machine-readable Platform-System truth.
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — current source architecture.
-- [`docs/PLATFORM-INTEGRATIONS.md`](docs/PLATFORM-INTEGRATIONS.md) — truthful Integral Platform System status.
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/LOCAL-DATA.md`](docs/LOCAL-DATA.md), and [`docs/PLATFORM-INTEGRATIONS.md`](docs/PLATFORM-INTEGRATIONS.md).
 
 ## Build validation
 
-CI validates the exact candidate revision with Java 17 and Gradle 9.5.0, then runs:
+CI validates the exact candidate revision with Java 17 and Gradle 9.5.0 and runs unit tests, lint, development APK assembly, package/version/label verification, and the no-`INTERNET` guard.
 
-```text
-gradle :app:testDebugUnitTest
-gradle :app:lintDebug
-gradle :app:assembleDebug
-```
-
-The workflow also verifies the Development APK identity and rejects accidental `android.permission.INTERNET` in this foundation stage.
-
-A successful source build is Development evidence only. It is not Stable qualification, production acceptance, Glaze UI acceptance, Privacy Shield acceptance, Wardveil acceptance, Everkeep recovery acceptance, or supported-provider acceptance.
+A green Development build does not establish release, Stable, Glaze UI, Privacy Shield, Wardveil, Everkeep, provider, or production acceptance.
 
 ## Licensing
 
-No public software license has yet been approved for this product. See [`LICENSE`](LICENSE). Public repository visibility must not be interpreted as an unrecorded license grant.
+No public software license has yet been approved for this product. See [`LICENSE`](LICENSE).
