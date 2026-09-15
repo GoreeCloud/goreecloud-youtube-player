@@ -223,11 +223,11 @@ class SQLiteLocalLibraryStoreInstrumentedTest {
 
             db.execSQL(
                 "INSERT INTO watch_history (provider_id, provider_video_id, first_watched_at_ms, last_watched_at_ms, play_count, completed) VALUES (?, ?, ?, ?, ?, ?)",
-                arrayOf("legacy", "legacy-video", 100, 200, 3, 0),
+                arrayOf<Any?>("legacy", "legacy-video", 100, 200, 3, 0),
             )
             db.execSQL(
                 "INSERT INTO resume_positions (provider_id, provider_video_id, position_ms, updated_at_ms) VALUES (?, ?, ?, ?)",
-                arrayOf("legacy", "legacy-video", 4_200, 200),
+                arrayOf<Any?>("legacy", "legacy-video", 4_200, 200),
             )
             db.version = 1
         }
