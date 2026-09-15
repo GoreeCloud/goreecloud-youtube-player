@@ -9,8 +9,7 @@ data class WatchHistoryEntry(
     val completed: Boolean,
 ) {
     init {
-        require(providerId.isNotBlank()) { "providerId must not be blank" }
-        require(providerVideoId.isNotBlank()) { "providerVideoId must not be blank" }
+        requireIdentity(providerId, providerVideoId)
         require(firstWatchedAtMs >= 0) { "firstWatchedAtMs must be non-negative" }
         require(lastWatchedAtMs >= firstWatchedAtMs) {
             "lastWatchedAtMs must be greater than or equal to firstWatchedAtMs"
@@ -26,10 +25,31 @@ data class ResumePositionEntry(
     val updatedAtMs: Long,
 ) {
     init {
-        require(providerId.isNotBlank()) { "providerId must not be blank" }
-        require(providerVideoId.isNotBlank()) { "providerVideoId must not be blank" }
+        requireIdentity(providerId, providerVideoId)
         require(positionMs >= 0) { "positionMs must be non-negative" }
         require(updatedAtMs >= 0) { "updatedAtMs must be non-negative" }
+    }
+}
+
+data class FavoriteEntry(
+    val providerId: String,
+    val providerVideoId: String,
+    val addedAtMs: Long,
+) {
+    init {
+        requireIdentity(providerId, providerVideoId)
+        require(addedAtMs >= 0) { "addedAtMs must be non-negative" }
+    }
+}
+
+data class WatchLaterEntry(
+    val providerId: String,
+    val providerVideoId: String,
+    val addedAtMs: Long,
+) {
+    init {
+        requireIdentity(providerId, providerVideoId)
+        require(addedAtMs >= 0) { "addedAtMs must be non-negative" }
     }
 }
 
@@ -40,36 +60,65 @@ data class LibrarySnapshotV1(
 ) {
     init {
         require(exportedAtMs >= 0) { "exportedAtMs must be non-negative" }
-        requireUniqueWatchHistory(watchHistory)
-        requireUniqueResumePositions(resumePositions)
-    }
-
-    private fun requireUniqueWatchHistory(entries: List<WatchHistoryEntry>) {
-        val keys = HashSet<Pair<String, String>>()
-        entries.forEach { entry ->
-            require(keys.add(entry.providerId to entry.providerVideoId)) {
-                "Duplicate watch-history identity: ${entry.providerId}/${entry.providerVideoId}"
-            }
-        }
-    }
-
-    private fun requireUniqueResumePositions(entries: List<ResumePositionEntry>) {
-        val keys = HashSet<Pair<String, String>>()
-        entries.forEach { entry ->
-            require(keys.add(entry.providerId to entry.providerVideoId)) {
-                "Duplicate resume-position identity: ${entry.providerId}/${entry.providerVideoId}"
-            }
-        }
+        requireUniqueIdentities(watchHistory.map { it.providerId to it.providerVideoId }, "watch-history")
+        requireUniqueIdentities(resumePositions.map { it.providerId to it.providerVideoId }, "resume-position")
     }
 }
+
+data class LibrarySnapshotV2(
+    val exportedAtMs: Long,
+    val watchHistory: List<WatchHistoryEntry>,
+    val resumePositions: List<ResumePositionEntry>,
+    val favorites: List<FavoriteEntry>,
+    val watchLater: List<WatchLaterEntry>,
+) {
+    init {
+        require(exportedAtMs >= 0) { "exportedAtMs must be non-negative" }
+        requireUniqueIdentities(watchHistory.map { it.providerId to it.providerVideoId }, "watch-history")
+        requireUniqueIdentities(resumePositions.map { it.providerId to it.providerVideoId }, "resume-position")
+        requireUniqueIdentities(favorites.map { it.providerId to it.providerVideoId }, "favorite")
+        requireUniqueIdentities(watchLater.map { it.providerId to it.providerVideoId }, "watch-later")
+    }
+}
+
+fun LibrarySnapshotV1.toV2(): LibrarySnapshotV2 =
+    LibrarySnapshotV2(
+        exportedAtMs = exportedAtMs,
+        watchHistory = watchHistory,
+        resumePositions = resumePositions,
+        favorites = emptyList(),
+        watchLater = emptyList(),
+    )
 
 data class LocalLibrarySummary(
     val schemaVersion: Int,
     val watchHistoryCount: Int,
     val resumePositionCount: Int,
+    val favoriteCount: Int = 0,
+    val watchLaterCount: Int = 0,
 )
 
 data class LibraryImportSummary(
     val watchHistoryCount: Int,
     val resumePositionCount: Int,
+    val favoriteCount: Int = 0,
+    val watchLaterCount: Int = 0,
+    val sourceVersion: Int = 1,
 )
+
+private fun requireIdentity(providerId: String, providerVideoId: String) {
+    require(providerId.isNotBlank()) { "providerId must not be blank" }
+    require(providerVideoId.isNotBlank()) { "providerVideoId must not be blank" }
+}
+
+private fun requireUniqueIdentities(
+    identities: List<Pair<String, String>>,
+    label: String,
+) {
+    val keys = HashSet<Pair<String, String>>()
+    identities.forEach { identity ->
+        require(keys.add(identity)) {
+            "Duplicate $label identity: ${identity.first}/${identity.second}"
+        }
+    }
+}

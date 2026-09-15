@@ -1,83 +1,95 @@
 # Local Data Core
 
-## Current implementation state
+## Accepted baseline
 
-The integrated Android source binds the existing schema-v1 contract to a runtime SQLite adapter for the first user-owned progress state:
+Authoritative `main` commit `71e078c6ee8ed1c1602d388e77c112e669d39431` has accepted Android 16 emulator evidence for the schema-v1 progress boundary. Post-merge workflow run `34909976600` passed the standard Android validation job and three SQLite instrumentation tests covering first-open initialization, persistence across reopen, replacement semantics, and rejected-import state preservation.
+
+That evidence remains valid for the integrated v1 baseline. Physical-device acceptance is still separate.
+
+## Schema-v2 Development candidate
+
+PR #5 expands the local database through an explicit v1 → v2 migration instead of destructive recreation.
+
+The candidate binds four provider-neutral record classes:
 
 - watch history;
-- resume positions.
+- resume positions;
+- favorites;
+- Watch Later.
 
-The remaining schema-v1 tables for channel follows, playlists, tags, and related organizational state remain schema-defined but are not yet bound to the runtime repository API in this slice.
-
-This distinction is intentional. The implementation must not imply that the entire planned local library is complete merely because its schema exists.
+The existing schema-defined channel follows, playlists, tags, and related organizational state remain outside the runtime repository API in this slice. Their presence in the database schema does not imply feature completion.
 
 ## Database authority
 
-`SQLiteLocalLibraryStore` is the current Android runtime persistence boundary.
+`SQLiteLocalLibraryStore` remains the Android runtime persistence boundary.
 
-It:
+The schema-v2 candidate:
 
-- opens `goreecloud-youtube-player.db` at schema version 1;
-- installs `app/src/main/assets/database/schema-v1.sql` on first creation;
+- opens `goreecloud-youtube-player.db` at database version 2;
+- installs `app/src/main/assets/database/schema-v2.sql` on a new database;
+- retains the historical `schema-v1.sql` contract for migration evidence;
+- executes only the reviewed `migration-v1-to-v2.sql` path when upgrading version 1 to version 2;
+- fails closed for all other unapproved upgrades and for downgrades;
 - enables SQLite foreign-key enforcement;
-- exposes provider-neutral watch-history and resume-position operations;
-- supports atomic replacement of exported/imported progress state;
-- fails closed if an unimplemented database upgrade or downgrade is requested.
+- exposes provider-neutral watch-history, resume-position, Favorites, and Watch Later operations;
+- atomically replaces all four portable record classes after import validation.
 
-The database remains local application state. Android automatic backup remains disabled because Everkeep recovery authority is not implemented or accepted for this product.
+Android automatic backup remains disabled because Everkeep recovery authority is not implemented or accepted.
 
-## Portable progress interchange v1
+## Portable interchange
 
-The first portability format is a deterministic UTF-8 text format named `GCYTP-LIBRARY` version `1`.
+`GCYTP-LIBRARY` v1 remains a supported import format for previously exported Development data.
 
-It is deliberately dependency-light and provider-neutral. Provider and video identifiers are encoded using URL-safe Base64 without padding so tabs and newlines cannot alter record boundaries.
-
-Structure:
+The schema-v2 candidate exports `GCYTP-LIBRARY` version 2. V2 retains the v1 watch-history (`W`) and resume-position (`R`) records and adds Favorites (`F`) and Watch Later (`L`). Its footer includes counts for all four record classes plus the SHA-256 body digest.
 
 ```text
-GCYTP-LIBRARY<TAB>1<TAB><exportedAtMs>
+GCYTP-LIBRARY<TAB>2<TAB><exportedAtMs>
 W<TAB><provider><TAB><video><TAB><firstWatchedAtMs><TAB><lastWatchedAtMs><TAB><playCount><TAB><completed>
 R<TAB><provider><TAB><video><TAB><positionMs><TAB><updatedAtMs>
-END<TAB><watchCount><TAB><resumeCount><TAB><sha256-of-body>
+F<TAB><provider><TAB><video><TAB><addedAtMs>
+L<TAB><provider><TAB><video><TAB><addedAtMs>
+END<TAB><watchCount><TAB><resumeCount><TAB><favoriteCount><TAB><watchLaterCount><TAB><sha256-of-body>
 ```
 
-The codec:
+The v2 codec sorts each record class deterministically and validates numeric ranges, identities, duplicates, record types, record counts, supported version, and SHA-256 integrity before persistent replacement.
 
-- sorts records deterministically before export;
-- validates numeric ranges;
-- rejects blank provider/video identities;
-- rejects duplicate provider/video identities within a record class;
-- rejects unknown record types and unsupported versions;
-- verifies declared record counts;
-- verifies a SHA-256 integrity digest before accepting imported state.
+Integrity verification detects accidental or unreviewed modification. It is not an authenticity signature.
 
-Integrity verification detects accidental or unreviewed modification. It is not an authenticity signature and must not be represented as one.
+## Backward-compatible import behavior
 
-## Import semantics
+The version-dispatch layer accepts v1 and v2 payloads. A valid v1 payload is upgraded in memory to a v2 snapshot with empty Favorites and Watch Later collections.
 
-`LibraryPortabilityService.importProgress` fully validates the interchange payload before mutating local state. A validated import atomically replaces the current watch-history and resume-position tables.
+Current import behavior remains explicit whole-library **replace** semantics. Therefore importing a v1 payload into a v2 store clears any current Favorites or Watch Later state. This is deterministic low-level behavior, not yet a user-facing product decision.
 
-Merge/append import modes are not implemented in this slice. User-facing import conflict controls, Everkeep recovery integration, Privacy Shield policy integration, and import previews remain future work.
+User-facing preview plus explicit merge/replace choices remain the next portability UX gate and must make this effect understandable before a destructive replacement is confirmed.
 
-## Android runtime acceptance candidate
+## Candidate validation requirements
 
-The current Development validation branch adds instrumentation tests that exercise the real SQLite adapter on an Android 16 emulator. The tests verify:
+PR #5 must prove on its exact final revision:
 
-- first-open schema-v1 initialization and empty summary state;
-- watch-history and resume-position persistence across database close/reopen;
-- replacement progress state surviving reopen while prior state is removed;
-- a tampered interchange payload being rejected before replacement and existing persisted progress remaining unchanged.
+- new schema-v2 database initialization;
+- persistence of all four bound record classes across database close/reopen;
+- migration of a real schema-v1 fixture to v2 without losing existing watch-history/resume state;
+- ability to write/read new Favorites and Watch Later state after migration;
+- deterministic v2 export/import;
+- successful import of legacy v1 exports;
+- atomic v2 replacement semantics;
+- rejection of tampered data before mutation;
+- the existing no-`INTERNET` privacy guard and standard Android build/lint/test gates.
 
-The associated CI job records and verifies the exact source revision before starting the emulator, runs `:app:connectedDebugAndroidTest`, and preserves emulator/test evidence as a workflow artifact.
-
-This is not accepted runtime evidence until the exact candidate passes and the validated source is intentionally integrated and post-merge verified.
+No v2 behavior is integrated or accepted until the exact candidate passes these checks, is intentionally merged, and the resulting `main` revision is post-merge validated.
 
 ## Privacy and network posture
 
-This local-data slice adds no application network permission, remote account dependency, telemetry, cloud synchronization, remote backup, provider authentication, or external data transmission.
+This work adds no application network permission, remote account dependency, telemetry, cloud synchronization, remote backup, provider authentication, or external data transmission.
 
 Future remote synchronization or backup work must establish its own Identity, Privacy Shield, Wardveil Security, Everkeep, and provider authorization boundaries before being exposed as available.
 
-## Validation boundary
+## Remaining local-data gates
 
-Passing JVM tests, Android lint, APK assembly, or instrumentation tests proves only the behavior each check actually exercises. Runtime emulator evidence does not establish physical-device acceptance, complete local-library behavior, approved schema migrations beyond v1, recovery acceptance, release readiness, production acceptance, or Stable qualification.
+- Physical-device acceptance for the durable local-data behavior.
+- User-facing export/import preview, merge/replace controls, accessible error handling, and recovery UX.
+- Further approved local-library persistence with matching migrations and portability coverage.
+- Privacy Shield runtime authorization.
+- Everkeep backup, restore, and recovery acceptance.
+- Production/release/Stable qualification.

@@ -33,18 +33,12 @@ fun GoreeCloudYouTubePlayerApp(
     val provider = remember { LocalDemoProvider() }
     val resolver = remember { CapabilityResolver() }
     val decisions = remember(provider, resolver) {
-        ProviderCapability.entries.map { capability ->
-            resolver.resolve(provider, capability)
-        }
+        ProviderCapability.entries.map { capability -> resolver.resolve(provider, capability) }
     }
 
     MaterialTheme {
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("GoreeCloud YouTube Player Dev") },
-                )
-            },
+            topBar = { TopAppBar(title = { Text("GoreeCloud YouTube Player Dev") }) },
         ) { contentPadding ->
             LazyColumn(
                 modifier = Modifier
@@ -68,7 +62,7 @@ fun GoreeCloudYouTubePlayerApp(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(
-                            text = "Local data core: SQLite schema ${localLibrarySummary.schemaVersion} ready — ${localLibrarySummary.watchHistoryCount} history entries, ${localLibrarySummary.resumePositionCount} resume positions.",
+                            text = "Local data core: SQLite schema ${localLibrarySummary.schemaVersion} — ${localLibrarySummary.watchHistoryCount} history, ${localLibrarySummary.resumePositionCount} resume, ${localLibrarySummary.favoriteCount} favorites, ${localLibrarySummary.watchLaterCount} watch-later records.",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(

@@ -27,7 +27,7 @@ platform_systems:
     - PRIVACY POLICY.md
     - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: Local progress persistence and Android emulator runtime acceptance are integrated Development evidence, but accepted runtime Privacy Shield authorization is not implemented.
+    notes: Local progress persistence and Android emulator runtime acceptance are integrated Development evidence. PR #5 expands local-library data as a Development candidate; accepted runtime Privacy Shield authorization is not implemented.
   wardveil_security:
     result: applicable-blocked
     version: null
@@ -85,11 +85,11 @@ continuity:
   export:
     required: true
     requirements:
-    - Integrated Development source provides versioned progress export/import; user-facing acceptance and broader state coverage remain required.
+    - Integrated Development source provides v1 progress export/import; PR #5 proposes v2 Favorites/Watch Later portability with legacy-v1 import compatibility. User-facing acceptance remains required.
   portability:
     required: true
     requirements:
-    - Preserve provider-neutral identities and understandable versioned local-state formats.
+    - Preserve provider-neutral identities, explicit migration paths, and understandable versioned local-state formats.
 external_dependencies:
 - name: Gradle
   required: true
@@ -113,6 +113,9 @@ compatibility:
   - goreecloud-youtube-player-android-foundation
   - goreecloud-youtube-player-local-progress-data
   - goreecloud-youtube-player-local-progress-android-emulator-accepted
+  candidate_provides:
+  - goreecloud-youtube-player-local-library-schema-v2
+  - goreecloud-youtube-player-library-interchange-v2
   notes:
   - Platform Contract remains at the currently repository-declared 0.2 pending separate authoritative version reconciliation.
 evidence:
@@ -120,6 +123,7 @@ evidence:
   - .github/workflows/android.yml
   - app/src/test/java/com/goreecloud/youtubeplayer/provider/CapabilityResolverTest.kt
   - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryInterchangeV1CodecTest.kt
+  - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryInterchangeV2CodecTest.kt
   - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryPortabilityServiceTest.kt
   - app/src/androidTest/java/com/goreecloud/youtubeplayer/data/SQLiteLocalLibraryStoreInstrumentedTest.kt
   runtime:
@@ -141,6 +145,7 @@ conformance:
   - docs/PLATFORM-INTEGRATIONS.md
   blockers:
   - Remote provider support and production playback are not implemented.
+  - PR #5 schema-v2 migration and expanded local-library persistence are not integrated or accepted until exact-head and post-merge validation pass.
   - Physical-device local-data acceptance remains incomplete.
   - Local-data Privacy Shield and Everkeep acceptance are incomplete.
   - Planned Linux and Android TV / Google TV expansion targets are not implemented.

@@ -9,9 +9,17 @@ interface LocalLibraryStore : Closeable {
 
     fun upsertResumePosition(entry: ResumePositionEntry)
 
-    fun readSnapshot(exportedAtMs: Long): LibrarySnapshotV1
+    fun upsertFavorite(entry: FavoriteEntry)
 
-    fun replaceProgress(snapshot: LibrarySnapshotV1)
+    fun upsertWatchLater(entry: WatchLaterEntry)
+
+    fun readSnapshot(exportedAtMs: Long): LibrarySnapshotV2
+
+    fun replaceLibrary(snapshot: LibrarySnapshotV2)
+
+    fun replaceProgress(snapshot: LibrarySnapshotV1) {
+        replaceLibrary(snapshot.toV2())
+    }
 
     fun summary(): LocalLibrarySummary
 }
