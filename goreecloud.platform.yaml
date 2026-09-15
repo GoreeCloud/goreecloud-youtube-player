@@ -46,12 +46,12 @@ platform_systems:
     notes: Android automatic backup remains disabled and accepted backup/restore/recovery behavior is not implemented.
   glaze_ui:
     result: applicable-migration-required
-    version: 1.4.0
+    version: 1.4.1
     evidence:
     - README.md
     - docs/ARCHITECTURE.md
     - app/src/main/java/com/goreecloud/youtubeplayer/ui/GoreeCloudYouTubePlayerApp.kt
-    notes: 1.4.0 is the current Official/Stable consumer target. Application conformance remains unaccepted.
+    notes: GLAZE UI 1.4.1 is the current Official/Stable consumer target at authoritative main revision 4fab9da0fad2e5c974e0e66ec88632c61745751c. This child source tranche updates the explicit native consumer target only; application conformance remains unaccepted and requires fresh repository-local rendered, accessibility, device, performance, rollback, and release evidence.
   mesh:
     result: applicable-blocked
     version: null
@@ -85,7 +85,7 @@ continuity:
   export:
     required: true
     requirements:
-    - Integrated Development source provides v1 progress export/import; PR #5 proposes v2 Favorites/Watch Later portability with legacy-v1 import compatibility. User-facing acceptance remains required.
+    - PR #5 provides an exact-head validated Development candidate for v2 Favorites/Watch Later portability with legacy-v1 import compatibility. User-facing acceptance remains required.
   portability:
     required: true
     requirements:
@@ -105,10 +105,10 @@ external_dependencies:
   version: '2026.08.00'
 compatibility:
   platform_contract: '0.2'
-  glaze_ui_required: 1.4.0
+  glaze_ui_required: 1.4.1
   requires:
   - goreecloud-platform-contract==0.2
-  - glaze-ui==1.4.0
+  - glaze-ui==1.4.1
   provides:
   - goreecloud-youtube-player-android-foundation
   - goreecloud-youtube-player-local-progress-data
@@ -129,6 +129,8 @@ evidence:
   runtime:
   - main: 71e078c6ee8ed1c1602d388e77c112e669d39431
   - workflow_run: 34909976600
+  - schema_v2_candidate: 96db412b6da8a8c4688a1eae8b1f4186c97dc086
+  - schema_v2_workflow_run: 34913527734
   release: []
 conformance:
   status: nonconformant
@@ -145,10 +147,10 @@ conformance:
   - docs/PLATFORM-INTEGRATIONS.md
   blockers:
   - Remote provider support and production playback are not implemented.
-  - PR #5 schema-v2 migration and expanded local-library persistence are not integrated or accepted until exact-head and post-merge validation pass.
+  - PR #5 schema-v2 migration and expanded local-library persistence passed exact-head source/build/Android-16 runtime validation but remain unmerged Development evidence until normal integration and post-merge verification complete.
   - Physical-device local-data acceptance remains incomplete.
   - Local-data Privacy Shield and Everkeep acceptance are incomplete.
   - Planned Linux and Android TV / Google TV expansion targets are not implemented.
   - Runtime Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Identity, GoreeCloud Mesh, and GoreeCloud Manager integrations are incomplete.
-  - Current Glaze UI application conformance is not established.
+  - GLAZE UI 1.4.1 is now the required source target, but repository-local application conformance is not established.
   - Accessibility, representative-device, signing/distribution, recovery, rollback, and production acceptance are incomplete.
