@@ -23,7 +23,8 @@ import com.goreecloud.youtubeplayer.domain.ProviderCapability
 import com.goreecloud.youtubeplayer.provider.CapabilityResolver
 import com.goreecloud.youtubeplayer.provider.local.LocalDemoProvider
 
-private const val GLAZE_TARGET = "1.4.0"
+private const val GLAZE_TARGET = "1.4.1"
+private const val GLAZE_STABLE_AUTHORITY = "4fab9da0fad2e5c974e0e66ec88632c61745751c"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,7 @@ fun GoreeCloudYouTubePlayerApp(
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Text(
-                            text = "Glaze UI target: $GLAZE_TARGET — conformance pending",
+                            text = "Glaze UI target: $GLAZE_TARGET — source authority $GLAZE_STABLE_AUTHORITY — application conformance pending",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         Text(
