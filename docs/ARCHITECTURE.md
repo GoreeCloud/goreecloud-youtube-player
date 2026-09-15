@@ -2,9 +2,9 @@
 
 ## Current milestone
 
-The native Android foundation is integrated on `main`. The current Development candidate adds the first durable local-data runtime boundary while preserving the existing provider-independent architecture.
+The native Android foundation, durable local-progress source slice, and Android 16 emulator runtime acceptance are integrated on `main`. The current Development direction is to expand the local-data model through explicit migrations and portable versioning while preserving provider independence and the existing privacy boundary.
 
-This candidate does **not** establish YouTube provider compatibility, provider authentication, production playback, downloads, casting, Linux support, television acceptance, Platform-System acceptance, or Stable eligibility.
+This state does **not** establish YouTube provider compatibility, provider authentication, production playback, downloads, casting, Linux support, television acceptance, Platform-System acceptance, or Stable eligibility.
 
 ## Boundaries
 
@@ -26,13 +26,14 @@ ContentProvider contract
 
 Local state contract
         |
-        +--> schema-v1.sql
+        +--> versioned SQLite schema + explicit migrations
         +--> SQLiteLocalLibraryStore
         |       +--> watch history
         |       +--> resume positions
+        |       +--> additional local-library state only after migration/portability acceptance
         |
         +--> LibraryPortabilityService
-                +--> GCYTP-LIBRARY v1 validated export/import
+                +--> versioned GCYTP-LIBRARY validated export/import
 
 Integral Platform Systems
         |
@@ -51,19 +52,21 @@ Integral Platform Systems
 
 ## Local state
 
-`app/src/main/assets/database/schema-v1.sql` is the versioned local-state schema contract.
+The integrated schema-v1 contract and `SQLiteLocalLibraryStore` persist watch history and resume positions. The Android process opens the database during startup, enables SQLite foreign keys, fails closed on unsupported schema upgrade/downgrade, and exposes schema version plus progress-record counts to the Development UI.
 
-The current candidate binds watch history and resume positions through `SQLiteLocalLibraryStore`. The Android process opens the database during startup, enables SQLite foreign keys, fails closed on unsupported schema upgrade/downgrade, and exposes schema version plus progress-record counts to the Development UI.
+Authoritative `main` commit `71e078c6ee8ed1c1602d388e77c112e669d39431` passed post-merge run `34909976600`, including three Android 16 SQLite instrumentation tests. That evidence establishes the tested emulator-runtime persistence boundary only; physical-device acceptance remains separate.
 
 `LibraryPortabilityService` and `LibraryInterchangeV1Codec` provide deterministic versioned export/import for those progress records. Imported payloads are fully parsed, count-checked, range-checked, duplicate-checked, and SHA-256 integrity-checked before atomic replacement is allowed.
 
-Channel follows, playlists, tags, richer migrations, encryption decisions, Everkeep coverage, broader exports, user-facing conflict choices, and Privacy Shield runtime authorization remain separate work. See [`LOCAL-DATA.md`](LOCAL-DATA.md).
+The next local-data architecture increment must introduce explicit approved migration behavior before increasing the database version, preserve backward-compatible import of already exported v1 data, and add new durable state only together with matching persistence, portability, and tests.
+
+Channel follows, playlists, tags, encryption decisions, Everkeep coverage, user-facing conflict choices, and Privacy Shield runtime authorization remain separate work. See [`LOCAL-DATA.md`](LOCAL-DATA.md).
 
 Android automatic backup remains disabled because Everkeep recovery authority is not implemented or accepted.
 
 ## User interface and Glaze UI
 
-Jetpack Compose/Material 3 remains an implementation substrate, not proof of Glaze UI conformance. Glaze UI 1.3.0 is the current published Stable consumer target. Formal visual, behavioral, accessibility, form-factor, rollback, and runtime acceptance remain pending.
+Jetpack Compose/Material 3 remains an implementation substrate, not proof of Glaze UI conformance. Glaze UI 1.4.0 is the current Official/Stable consumer target. Formal visual, behavioral, accessibility, form-factor, rollback, and runtime acceptance remain pending.
 
 ## Privacy and network posture
 
@@ -83,7 +86,7 @@ Linux must be separately validated before support claims. Android TV / Google TV
 
 ## Next architecture increments
 
-1. Complete local-state coverage and approved schema-migration behavior.
+1. Add explicit local-database migration/versioning behavior and expand approved local-library persistence.
 2. Add user-facing export/import preview, merge/replace choices, and recovery UX.
 3. Build search/library UI against provider-neutral interfaces.
 4. Establish RSS subscription parsing/refresh behind a feed-provider boundary.

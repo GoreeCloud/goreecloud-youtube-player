@@ -27,7 +27,7 @@ platform_systems:
     - PRIVACY POLICY.md
     - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: Local progress persistence is integrated Development source, but accepted runtime Privacy Shield authorization is not implemented.
+    notes: Local progress persistence and Android emulator runtime acceptance are integrated Development evidence, but accepted runtime Privacy Shield authorization is not implemented.
   wardveil_security:
     result: applicable-blocked
     version: null
@@ -35,7 +35,7 @@ platform_systems:
     - SECURITY.md
     - docs/LOCAL-DATA.md
     - docs/PLATFORM-INTEGRATIONS.md
-    notes: Local parsing and persistence validation exist in Development source; accepted Wardveil runtime integration is not implemented.
+    notes: Local parsing, persistence validation, and Android emulator tests exist in Development source; accepted Wardveil runtime integration is not implemented.
   everkeep:
     result: applicable-blocked
     version: null
@@ -46,12 +46,12 @@ platform_systems:
     notes: Android automatic backup remains disabled and accepted backup/restore/recovery behavior is not implemented.
   glaze_ui:
     result: applicable-migration-required
-    version: 1.3.0
+    version: 1.4.0
     evidence:
     - README.md
     - docs/ARCHITECTURE.md
     - app/src/main/java/com/goreecloud/youtubeplayer/ui/GoreeCloudYouTubePlayerApp.kt
-    notes: 1.3.0 is the current published Stable consumer target. Application conformance remains unaccepted.
+    notes: 1.4.0 is the current Official/Stable consumer target. Application conformance remains unaccepted.
   mesh:
     result: applicable-blocked
     version: null
@@ -105,14 +105,16 @@ external_dependencies:
   version: '2026.08.00'
 compatibility:
   platform_contract: '0.2'
-  glaze_ui_required: 1.3.0
+  glaze_ui_required: 1.4.0
   requires:
   - goreecloud-platform-contract==0.2
-  - glaze-ui==1.3.0
+  - glaze-ui==1.4.0
   provides:
   - goreecloud-youtube-player-android-foundation
   - goreecloud-youtube-player-local-progress-data
-  - goreecloud-youtube-player-local-progress-runtime-validation-candidate
+  - goreecloud-youtube-player-local-progress-android-emulator-accepted
+  notes:
+  - Platform Contract remains at the currently repository-declared 0.2 pending separate authoritative version reconciliation.
 evidence:
   acceptance_tests:
   - .github/workflows/android.yml
@@ -120,6 +122,9 @@ evidence:
   - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryInterchangeV1CodecTest.kt
   - app/src/test/java/com/goreecloud/youtubeplayer/data/LibraryPortabilityServiceTest.kt
   - app/src/androidTest/java/com/goreecloud/youtubeplayer/data/SQLiteLocalLibraryStoreInstrumentedTest.kt
+  runtime:
+  - main: 71e078c6ee8ed1c1602d388e77c112e669d39431
+  - workflow_run: 34909976600
   release: []
 conformance:
   status: nonconformant
@@ -136,6 +141,7 @@ conformance:
   - docs/PLATFORM-INTEGRATIONS.md
   blockers:
   - Remote provider support and production playback are not implemented.
+  - Physical-device local-data acceptance remains incomplete.
   - Local-data Privacy Shield and Everkeep acceptance are incomplete.
   - Planned Linux and Android TV / Google TV expansion targets are not implemented.
   - Runtime Privacy Shield, Wardveil Security, Everkeep, GoreeCloud Identity, GoreeCloud Mesh, and GoreeCloud Manager integrations are incomplete.
